@@ -9,9 +9,9 @@ A lightweight, modular shader library built for Unity’s Universal Render Pipel
 Install from git url.
 
 ```text
-"fishwork.shader-library": "https://github.com/CodeNofish/ShaderLibrary.git?path=/Assets/Packages/ShaderLibrary",
+"fishwork.shader-library": "https://github.com/CodeNofish/ShaderLibrary.git?path=/Packages/ShaderLibrary",
 ```
 
 ```text
-https://github.com/CodeNofish/ShaderLibrary.git?path=/Assets/Packages/ShaderLibrary
+https://github.com/CodeNofish/ShaderLibrary.git?path=/Packages/ShaderLibrary
 ```
