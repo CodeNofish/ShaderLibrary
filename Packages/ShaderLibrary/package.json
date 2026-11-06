@@ -16,8 +16,16 @@
   "license": "MIT",
   "category": "Graphics",
   "dependencies": {
+    "com.unity.render-pipelines.universal": "17.6.0",
+    "com.unity.shadergraph": "17.6.0"
   },
-  "samples": [],
+  "samples": [
+    {
+      "displayName": "Shader Graph Function Sample",
+      "description": "Usage of Shader Graph Function Node",
+      "path": "Samples~/ShaderGraphFunctionSample"
+    }
+  ],
   "documentationUrl": "https://github.com/CodeNofish/ShaderLibrary/blob/main/Assets/ShaderLibrary/CHANGELOG.md",
   "changelogUrl": "https://github.com/CodeNofish/ShaderLibrary/blob/main/Assets/ShaderLibrary/CHANGELOG.md",
   "licensesUrl": "https://github.com/CodeNofish/ShaderLibrary/blob/main/Assets/ShaderLibrary/LICENSE.md"

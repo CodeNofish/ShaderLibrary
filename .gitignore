@@ -117,6 +117,9 @@ InitTestScene*.unity*
 /[Aa]ssets/DevLog~
 /[Aa]ssets/DevLog~/**
 
+/[Aa]ssets/Samples
+/[Aa]ssets/Samples/**
+
 # IDE
 /.idea
 /.vs
