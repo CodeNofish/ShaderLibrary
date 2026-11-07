@@ -1,6 +1,7 @@
 ﻿#ifndef SHADER_LIBRARY_MOTION_BLUR
 #define SHADER_LIBRARY_MOTION_BLUR
 
+// sampleCount 应限制为 [1, 16]
 #define MOTION_BLUR_SAMPLE_COUNT_HQ 8
 #define MOTION_BLUR_SAMPLE_COUNT 4
 
@@ -9,7 +10,6 @@
 // Motion Blur：沿速度向量做多采样模糊
 // velocity 建议使用 NDC 或 UV 空间位移；若是像素位移，需先乘 _ScreenParams.zw
 // maxVelocity 用于限制速度向量最大长度，单位与 velocity 一致
-// sampleCount 应在 C# 侧限制为 [1, 16]
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.MotionBlur</sg:ProviderKey>
 ///     <sg:DisplayName>Motion Blur</sg:DisplayName>
@@ -34,10 +34,6 @@
 ///<paramhints name = "velocity">
 ///     <sg:DisplayName>Velocity</sg:DisplayName>
 ///</paramhints>
-///<paramhints name = "sampleCount">
-///     <sg:DisplayName>Sample Count</sg:DisplayName>
-///     <sg:Default>8</sg:Default>
-///</paramhints>
 ///<paramhints name = "maxVelocity">
 ///     <sg:DisplayName>Max Velocity</sg:DisplayName>
 ///     <sg:Default>0.1</sg:Default>
@@ -48,7 +44,6 @@ float4 MotionBlur(
   UnitySamplerState samplerState,
   float2 uv,
   float2 velocity,
-  int sampleCount,
   float maxVelocity
 )
 {
@@ -63,10 +58,11 @@ float4 MotionBlur(
     vel = normalize(vel) * maxVel;
 
   float4 color = 0.0;
-  half invSamples = 1.0 / max(sampleCount, 1);
-  half halfCount = (sampleCount - 1) * 0.5;
+  half invSamples = 1.0 / max(MOTION_BLUR_SAMPLE_COUNT, 1);
+  half halfCount = (MOTION_BLUR_SAMPLE_COUNT - 1) * 0.5;
   
-  for (int i = 0; i < sampleCount; i++)
+  [unroll]
+  for (int i = 0; i < MOTION_BLUR_SAMPLE_COUNT; i++)
   {
     half t = (i - halfCount) / max(halfCount, 1e-4h);
     color += SAMPLE_TEXTURE2D(tex, samplerState, uv + vel * t);
@@ -74,6 +70,71 @@ float4 MotionBlur(
 
   return color * invSamples;
 }
+
+// Motion Blur：沿速度向量做多采样模糊
+// velocity 建议使用 NDC 或 UV 空间位移；若是像素位移，需先乘 _ScreenParams.zw
+// maxVelocity 用于限制速度向量最大长度，单位与 velocity 一致
+///<funchints>
+///     <sg:ProviderKey>ShaderLibrary.MotionBlurHQ</sg:ProviderKey>
+///     <sg:DisplayName>Motion Blur</sg:DisplayName>
+///     <sg:SearchCategory>ShaderLibrary/Blur</sg:SearchCategory>
+///     <sg:SearchName>MotionBlurHQ</sg:SearchName>
+///     <sg:SearchTerms>MotionBlurHQ, VelocityBlur, PostProcess, CameraMotionBlur</sg:SearchTerms>
+///     <sg:ReturnDisplayName>Out</sg:ReturnDisplayName>
+///     <sg:Version>1.2</sg:Version>
+///     <sg:DynamicPrecision/>
+///</funchints>
+///<paramhints name = "tex">
+///     <sg:DisplayName>Texture</sg:DisplayName>
+///</paramhints>
+///<paramhints name = "samplerState">
+///     <sg:DisplayName>Sampler State</sg:DisplayName>
+///</paramhints>
+///<paramhints name = "uv">
+///     <sg:DisplayName>UV</sg:DisplayName>
+///     <Default>UV0</Default>
+///     <UV/>
+///</paramhints>
+///<paramhints name = "velocity">
+///     <sg:DisplayName>Velocity</sg:DisplayName>
+///</paramhints>
+///<paramhints name = "maxVelocity">
+///     <sg:DisplayName>Max Velocity</sg:DisplayName>
+///     <sg:Default>0.1</sg:Default>
+///</paramhints>
+UNITY_EXPORT_REFLECTION
+float4 MotionBlurHQ(
+  UnityTexture2D tex,
+  UnitySamplerState samplerState,
+  float2 uv,
+  float2 velocity,
+  float maxVelocity
+)
+{
+  half2 vel = (half2)velocity;
+  half len = length(vel);
+  half maxVel = max((half)maxVelocity, 1e-4h);
+
+  if (len <= 1e-4h)
+    return SAMPLE_TEXTURE2D(tex, samplerState, uv);
+
+  if (len > maxVel)
+    vel = normalize(vel) * maxVel;
+
+  float4 color = 0.0;
+  half invSamples = 1.0 / max(MOTION_BLUR_SAMPLE_COUNT_HQ, 1);
+  half halfCount = (MOTION_BLUR_SAMPLE_COUNT_HQ - 1) * 0.5;
+  
+  [unroll]
+  for (int i = 0; i < MOTION_BLUR_SAMPLE_COUNT_HQ; i++)
+  {
+    half t = (i - halfCount) / max(halfCount, 1e-4h);
+    color += SAMPLE_TEXTURE2D(tex, samplerState, uv + vel * t);
+  }
+
+  return color * invSamples;
+}
+
 
 // Motion Blur：带权重衰减的版本
 // 中心采样权重更高，边缘更弱，可减轻拖影过散的问题
@@ -160,7 +221,7 @@ float4 MotionBlurWeighted(
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.ComputeMotionVelocityFromDepth</sg:ProviderKey>
 ///     <sg:DisplayName>Compute Motion Velocity From Depth</sg:DisplayName>
-///     <sg:SearchCategory>ShaderLibrary/MotionBlur</sg:SearchCategory>
+///     <sg:SearchCategory>ShaderLibrary/Blur</sg:SearchCategory>
 ///     <sg:SearchName>ComputeMotionVelocityFromDepth</sg:SearchName>
 ///     <sg:SearchTerms>MotionBlur, Velocity, DepthReconstruction, CameraMotion</sg:SearchTerms>
 ///     <sg:ReturnDisplayName>Out</sg:ReturnDisplayName>
