@@ -1,0 +1,45 @@
+﻿Unity 中常用的 Shader 效果可以按“基础材质”、“风格化/非真实感”、“动态特效”和“后处理”四大类来归纳。以下是基于当前 Unity（含 URP/HDRP 及 Shader Graph）生态的常用效果梳理：
+
+### 1. 基础材质与光照效果
+这类效果是项目中最常用的，用于模拟现实世界或基础渲染需求：
+-   **Lit / Standard (PBR)：** 基于物理的渲染，支持金属度/粗糙度或高光/光泽度工作流，能真实模拟石头、木材、金属、玻璃等材质在不同光照下的反应。URP 中对应 `Lit` 和 `Complex Lit`，内置管线对应 `Standard Shader`。
+-   **Unlit：** 不受场景光照影响，仅显示纹理或颜色。常用于 UI、自发光物体、全息投影或性能敏感的低端设备。
+-   **Simple Lit / Baked Lit：** 非 PBR 的简化光照或纯烘焙光照，适用于移动端优化或风格化项目中不需要实时复杂光照的场景。
+-   **Detail Mapping：** 通过叠加细节贴图（颜色、法线或完整材质）来增加表面微观细节，避免近距离观察时纹理模糊。
+-   **Triplanar Projection：** 三平面映射，无需 UV 即可在物体表面投射纹理，常用于地形、岩石或程序化生成的物体，避免拉伸和接缝。
+
+### 2. 风格化与非真实感渲染 (NPR)
+-   **Toon / Cel Shading（卡通渲染）：** 将光照离散化为色阶，配合描边实现动漫风格。可通过自定义光照函数或 Shader Graph 中的 Custom Lighting 节点实现。
+-   **Outline（描边）：** 常见实现方式包括背面膨胀法、Sobel 边缘检测、Hull Outline 等，用于强调角色轮廓或交互反馈。
+-   **Gooch Shading：** 一种经典 NPR 技术，用冷暖色调替代传统明暗过渡，增强艺术表现力。
+-   **Pixelate / Retro / Synthwave：** 像素化、复古 CRT 扫描线、合成波网格等风格化全屏或局部效果。
+-   **Matcap / Sphere Mapping：** 球面映射，用一张球形环境贴图模拟反射或光影，开销极低，适合卡通或特殊材质。
+
+### 3. 动态与视觉特效 (VFX)
+这类效果通常涉及顶点动画、UV 扰动或透明度控制：
+-   **Dissolve（溶解）：** 通过噪声图裁剪 Alpha 实现物体消失/出现，可加边缘发光色；进阶版支持基于距离、平面或物体靠近触发的局部溶解。
+-   **Fresnel / Rim Light（边缘发光）：** 基于视角与法线夹角产生边缘光，常用于能量罩、全息、选中高亮或带方向性的菲涅尔效果。
+-   **Water / Liquid（水体/液体）：** 包含水面波动（Gerstner 波）、折射、反射、深度雾、焦散（Caustics）、泡沫、流动水纹等。Shader Graph 官方案例提供了湖水、溪流、瀑布等多种水体模板。
+-   **Vertex Animation（顶点动画）：** 如旗帜飘动、草地随风摆动、弯曲世界（Curved World）、Billboard 朝向摄像机、Mesh Explosion（网格爆炸）等，直接在顶点着色器中完成，性能优于骨骼动画。
+-   **Heat Distortion（热扭曲）：** 模拟高温空气折射，用于火焰、引擎尾气等。
+-   **Hologram / Energy Shield（全息/能量罩）：** 结合扫描线、噪声、菲涅尔和自发光，实现科幻感护盾或投影效果。
+-   **Trail / Ribbon（拖尾/丝带）：** 子弹轨迹、刀光剑影等，常配合粒子系统或专用 Trail Renderer Shader。
+-   **Snow / Ice Accumulation（积雪/结冰）：** 基于法线朝上分量混合雪层或冰晶材质，支持动态积累与融化。
+
+### 4. 后处理效果 (Post-Processing)
+作用于整个屏幕或特定层级，通常在 URP/HDRP 的 Post-processing Volume 中使用：
+-   **Bloom / Glow（泛光）：** 提亮高光区域并扩散，营造发光感。
+-   **Blur（模糊）：** 高斯模糊、径向模糊、运动模糊、Kawase 模糊等，用于景深、UI 背景、速度感或转场。
+-   **Color Grading / Tone Mapping：** 色彩校正、LUT 调色、胶片颗粒、暗角等。
+-   **Fog（雾效）：** 距离雾、高度雾、体积雾，增强空间层次感。
+-   **Glitch / Chromatic Aberration（故障/色差）：** RGB 分离、画面撕裂、噪点，用于受伤、黑客、传送等反馈。
+-   **Underwater / Caustics Overlay：** 水下扭曲 + 焦散投影，配合 Mask 可限定作用区域。
+-   **Silhouette / X-Ray（剪影/透视）：** 被遮挡物体的轮廓显示，常用于队友标记或隐藏敌人提示。
+-   **Dither Transparency：** 抖动透明，用点阵图案代替半透明 Alpha，避免透明排序问题且性能更好。
+
+### 💡 实现工具建议
+-   **Shader Graph：** 上述绝大多数效果（尤其是 URP/HDRP）均可通过可视化节点搭建，官方和社区提供了大量现成 Subgraph（如 Flow Map、Parallax、Custom Lighting、Procedural Noise 等）。
+-   **Asset Store 资源包：** 如 *Shader Toolbox for URP*、*Snapshot Shaders 2*、*Production Ready Shaders* 等，提供开箱即用的效果和模块化子图，适合快速原型或生产使用。
+-   **自定义 HLSL：** 对于极致性能优化或 Shader Graph 不支持的特性（如 Compute Shader、几何着色器、高级分支），仍需手写代码。
+
+> **注意：** 具体可用效果取决于你使用的渲染管线（Built-in / URP / HDRP）及 Unity 版本。URP/HDRP 的 Shader Graph 是当前主流推荐方案；Built-in 管线的 Surface Shader 仍可用但不再新增功能。建议在 Unity Package Manager 中导入对应管线的 Samples 以获取官方示例工程。
