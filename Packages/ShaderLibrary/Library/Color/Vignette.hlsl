@@ -2,7 +2,7 @@
 #define SHADER_LIBRARY_VIGNETTE
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/ColorGrading/ColorCommon.hlsl"
+#include "Packages/ShaderLibrary/Library/Color/Common.hlsl"
 
 // Vignette（暗角 / 晕影）
 // 程序化暗角：实时计算像素到中心的欧氏距离，用 pow(saturate(1 - dist²), smoothness) 生成径向渐变

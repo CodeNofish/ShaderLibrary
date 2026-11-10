@@ -2,19 +2,22 @@
 #define SHADER_LIBRARY_COLOR_SPACE
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/ColorGrading/ColorCommon.hlsl"
+#include "Packages/ShaderLibrary/Library/Color/Common.hlsl"
 
 // 色彩空间感知调色：调色应在 ACEScg / LogC 等空间中进行，而不是在线性 sRGB 中直接处理
 // 这样可避免高光压缩与饱和度调整时的色相偏移、高光断层
-// 用法：LinearToACEScg → 调色节点 → ACEScgToLinear；HDR LUT 查表用 LinearToLogC 编码
+// 
+// 用法：
+// LinearToACEScg → 调色节点 → ACEScgToLinear；
+// HDR LUT 查表用 LinearToLogC 编码
 
 // 线性 sRGB → ACEScg(AP1)：把调色移到 ACES 宽色域空间
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.LinearToACEScg</sg:ProviderKey>
 ///     <sg:DisplayName>Linear To ACEScg</sg:DisplayName>
-///     <sg:SearchCategory>ShaderLibrary/ColorGrading</sg:SearchCategory>
-///     <sg:SearchName>LinearToACEScg</sg:SearchName>
-///     <sg:SearchTerms>ColorGrading, ColorSpace, ACEScg, AP1, Linear, HDR, PostEffect</sg:SearchTerms>
+///     <sg:SearchCategory>ShaderLibrary/ColorSpace</sg:SearchCategory>
+///     <sg:SearchName>Linear To ACEScg</sg:SearchName>
+///     <sg:SearchTerms>Color, ColorSpace, ACEScg, AP1, Linear, HDR, PostEffect</sg:SearchTerms>
 ///     <sg:ReturnDisplayName>Out</sg:ReturnDisplayName>
 ///     <sg:Version>1.0</sg:Version>
 ///     <sg:DynamicPrecision/>
@@ -33,9 +36,9 @@ float3 LinearToACEScg(float3 color)
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.ACEScgToLinear</sg:ProviderKey>
 ///     <sg:DisplayName>ACEScg To Linear</sg:DisplayName>
-///     <sg:SearchCategory>ShaderLibrary/ColorGrading</sg:SearchCategory>
-///     <sg:SearchName>ACEScgToLinear</sg:SearchName>
-///     <sg:SearchTerms>ColorGrading, ColorSpace, ACEScg, AP1, Linear, HDR, PostEffect</sg:SearchTerms>
+///     <sg:SearchCategory>ShaderLibrary/ColorSpace</sg:SearchCategory>
+///     <sg:SearchName>ACEScg To Linear</sg:SearchName>
+///     <sg:SearchTerms>Color, ColorSpace, ACEScg, AP1, Linear, HDR, PostEffect</sg:SearchTerms>
 ///     <sg:ReturnDisplayName>Out</sg:ReturnDisplayName>
 ///     <sg:Version>1.0</sg:Version>
 ///     <sg:DynamicPrecision/>
@@ -56,9 +59,9 @@ float3 ACEScgToLinear(float3 color)
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.LinearToLogC</sg:ProviderKey>
 ///     <sg:DisplayName>Linear To LogC</sg:DisplayName>
-///     <sg:SearchCategory>ShaderLibrary/ColorGrading</sg:SearchCategory>
-///     <sg:SearchName>LinearToLogC</sg:SearchName>
-///     <sg:SearchTerms>ColorGrading, ColorSpace, LogC, ARRI, HDR, LUT, PostEffect</sg:SearchTerms>
+///     <sg:SearchCategory>ShaderLibrary/ColorSpace</sg:SearchCategory>
+///     <sg:SearchName>Linear To LogC</sg:SearchName>
+///     <sg:SearchTerms>Color, ColorSpace, LogC, ARRI, HDR, LUT, PostEffect</sg:SearchTerms>
 ///     <sg:ReturnDisplayName>Out</sg:ReturnDisplayName>
 ///     <sg:Version>1.0</sg:Version>
 ///     <sg:DynamicPrecision/>
@@ -68,7 +71,7 @@ float3 ACEScgToLinear(float3 color)
 ///     <sg:Default>0,0,0</sg:Default>
 ///</paramhints>
 UNITY_EXPORT_REFLECTION
-float3 LinearToLogC(float3 color)
+float3 ShaderLibrary_LinearToLogC(float3 color)
 {
   return ColorLinearToLogC(color);
 }
@@ -77,9 +80,9 @@ float3 LinearToLogC(float3 color)
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.LogCToLinear</sg:ProviderKey>
 ///     <sg:DisplayName>LogC To Linear</sg:DisplayName>
-///     <sg:SearchCategory>ShaderLibrary/ColorGrading</sg:SearchCategory>
-///     <sg:SearchName>LogCToLinear</sg:SearchName>
-///     <sg:SearchTerms>ColorGrading, ColorSpace, LogC, ARRI, HDR, LUT, PostEffect</sg:SearchTerms>
+///     <sg:SearchCategory>ShaderLibrary/ColorSpace</sg:SearchCategory>
+///     <sg:SearchName>LogC To Linear</sg:SearchName>
+///     <sg:SearchTerms>Color, ColorSpace, LogC, ARRI, HDR, LUT, PostEffect</sg:SearchTerms>
 ///     <sg:ReturnDisplayName>Out</sg:ReturnDisplayName>
 ///     <sg:Version>1.0</sg:Version>
 ///     <sg:DynamicPrecision/>
@@ -89,7 +92,7 @@ float3 LinearToLogC(float3 color)
 ///     <sg:Default>0,0,0</sg:Default>
 ///</paramhints>
 UNITY_EXPORT_REFLECTION
-float3 LogCToLinear(float3 logC)
+float3 ShaderLibrary_LogCToLinear(float3 logC)
 {
   return ColorLogCToLinear(logC);
 }

@@ -2,7 +2,7 @@
 #define SHADER_LIBRARY_LUT
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/ColorGrading/ColorCommon.hlsl"
+#include "Packages/ShaderLibrary/Library/Color/Common.hlsl"
 
 // 基于 LUT（Look-Up Table）的调色
 // External LUT：外部软件（DaVinci Resolve、Photoshop）制作的 .cube 文件，导入后通常为 strip 排布的 2D 纹理

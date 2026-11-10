@@ -2,7 +2,7 @@
 #define SHADER_LIBRARY_FILM_GRAIN
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/ColorGrading/ColorCommon.hlsl"
+#include "Packages/ShaderLibrary/Library/Color/Common.hlsl"
 
 // Film Grain（胶片颗粒）：银盐晶体随机分布的物理特性模拟，与数码噪点不同
 // 时间按每秒 24 帧量化；颗粒按亮度加权，中间调最明显、纯黑纯白处减弱

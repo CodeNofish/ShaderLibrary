@@ -2,14 +2,15 @@
 #define SHADER_LIBRARY_COLOR_GRADING
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/ColorGrading/ColorCommon.hlsl"
+#include "Packages/ShaderLibrary/Library/Color/Common.hlsl"
 
 // 程序化参数调色（Procedural / Parametric Color Grading）
 // 不依赖 LUT 纹理，直接在 Shader 里调整色彩属性，通常作为 LUT 的前置步骤或轻量级替代
 // 覆盖：色温/色调白平衡、对比度与饱和度、阴影/中间调/高光分区、RGB/HSL 曲线、通道混合器
 
 // 色温 / 色调（白平衡偏移）
-// temperature > 0 偏暖（加红减蓝），< 0 偏冷；tint > 0 偏洋红，< 0 偏绿
+// temperature > 0 偏暖（加红减蓝），< 0 偏冷；
+// tint > 0 偏洋红，< 0 偏绿；
 // 两者取 [-1,1]，模拟 Kelvin / Tint 白平衡，不改变整体亮度
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.WhiteBalance</sg:ProviderKey>
@@ -66,12 +67,13 @@ float3 WhiteBalance(float3 color, float temperature, float tint)
 UNITY_EXPORT_REFLECTION
 float3 Saturation(float3 color, float saturation)
 {
-  float l = ColorLuma(color);
+  float l = ColorLumaInternal(color);
   return lerp(float3(l, l, l), color, max(1.0 + saturation, 0.0));
 }
 
-// 对比度：绕 pivot 做线性拉伸
-// contrast = 0 原图；pivot 默认 0.5（SDR），线性 HDR 场景可设 0.18
+// 对比度：以pivot为中心的线性对比度拉伸函数
+// contrast = 0 原图；
+// pivot 默认 0.5（SDR），线性 HDR 场景可设 0.18
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.Contrast</sg:ProviderKey>
 ///     <sg:DisplayName>Contrast</sg:DisplayName>
@@ -223,7 +225,7 @@ float3 LiftGammaGain(float3 color, float3 lift, float3 gamma, float3 gain)
 UNITY_EXPORT_REFLECTION
 float3 SplitToning(float3 color, float3 shadowTint, float3 highlightTint, float balance)
 {
-  float l = ColorLuma(saturate(color));
+  float l = ColorLumaInternal(saturate(color));
   float w = smoothstep(0.0, 1.0, saturate(l * 2.0 + balance));
   float3 tint = lerp(shadowTint, highlightTint, w);
 

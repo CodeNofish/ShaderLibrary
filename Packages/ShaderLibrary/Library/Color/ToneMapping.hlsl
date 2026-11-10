@@ -2,7 +2,7 @@
 #define SHADER_LIBRARY_TONE_MAPPING
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/ColorGrading/ColorCommon.hlsl"
+#include "Packages/ShaderLibrary/Library/Color/Common.hlsl"
 
 // Tone Mapping：把 HDR 光照非线性压缩到 SDR 显示范围
 // exposure 统一为曝光补偿（EV），内部用 exp2(exposure) 缩放，建议 -2 ~ 2
@@ -205,7 +205,7 @@ float4 LocalExposure(
   neighbors += SAMPLE_TEXTURE2D(tex, samplerState, uv - float2(0.0, o.y)).rgb;
 
   float3 average = (c.rgb + neighbors) * 0.2;
-  float localLuma = ColorLuma(average);
+  float localLuma = ColorLumaInternal(average);
   float gain = clamp(pow(0.18 / max(localLuma, 1e-4), saturate(strength)), 0.25, 4.0);
 
   return float4(c.rgb * exp2(exposure) * gain, c.a);
