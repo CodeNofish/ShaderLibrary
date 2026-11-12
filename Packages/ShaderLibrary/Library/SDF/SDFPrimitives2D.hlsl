@@ -2,7 +2,6 @@
 #define SHADER_LIBRARY_SDF_PRIMITIVES_2D
 
 #include "ShaderApiReflectionSupport.hlsl"
-#include "Packages/ShaderLibrary/Library/SDF/SDFCommon.hlsl"
 
 // SDF 2D 基础原语：输入采样点（通常直接接 UV），返回带符号距离
 // 距离为 UV / 对象单位：负值在形状内、正值在形状外、0 在边缘
@@ -36,7 +35,9 @@ float SDF2DCircle(float2 position, float radius)
   return length(position) - max(radius, 0.0);
 }
 
-// 矩形（可带圆角），halfSize 为半宽半高，cornerRadius 自动钳制到不超过最小半边长
+// 矩形（可带圆角）
+// halfSize 为半宽半高
+// cornerRadius 自动钳制到不超过最小半边长
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.SDF2DBox</sg:ProviderKey>
 ///     <sg:DisplayName>SDF 2D Box</sg:DisplayName>
@@ -68,7 +69,8 @@ float SDF2DBox(float2 position, float2 halfSize, float cornerRadius)
   return min(max(q.x, q.y), 0.0) + length(max(q, 0.0)) - r;
 }
 
-// 线段（pointA 到 pointB），本身无宽度，配合描边 / 距离阈值形成任意方向的线条
+// 线段（pointA 到 pointB）
+// 本身无宽度，配合描边 / 距离阈值形成任意方向的线条
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.SDF2DSegment</sg:ProviderKey>
 ///     <sg:DisplayName>SDF 2D Segment</sg:DisplayName>
@@ -101,7 +103,8 @@ float SDF2DSegment(float2 position, float2 pointA, float2 pointB)
   return length(pa - ba * h);
 }
 
-// 菱形，halfSize 为两对角线的半长
+// 菱形
+// halfSize 为两对角线的半长
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.SDF2DRhombus</sg:ProviderKey>
 ///     <sg:DisplayName>SDF 2D Rhombus</sg:DisplayName>
@@ -133,7 +136,9 @@ float SDF2DRhombus(float2 position, float2 halfSize)
   return d * sign(p.x * b.y + p.y * b.x - b.x * b.y);
 }
 
-// 五角星：outerRadius 外接半径，innerRatio 内半径比例（0.1~0.9，越小星越尖）
+// 五角星
+// outerRadius 外接半径
+// innerRatio 内半径比例（0.1~0.9，越小星越尖）
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.SDF2DStar</sg:ProviderKey>
 ///     <sg:DisplayName>SDF 2D Star</sg:DisplayName>
@@ -177,7 +182,8 @@ float SDF2DStar(float2 position, float outerRadius, float innerRatio)
   return length(p - ba * h) * sign(p.y * ba.x - p.x * ba.y);
 }
 
-// 正六边形：radius 为外接圆半径（尖朝上下方向）
+// 正六边形
+// radius 为外接圆半径（尖朝上下方向）
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.SDF2DHexagon</sg:ProviderKey>
 ///     <sg:DisplayName>SDF 2D Hexagon</sg:DisplayName>
@@ -209,7 +215,8 @@ float SDF2DHexagon(float2 position, float radius)
   return length(p) * sign(p.y);
 }
 
-// 等边三角形：radius 为外接圆半径，底边朝下
+// 等边三角形
+// radius 为外接圆半径，底边朝下
 ///<funchints>
 ///     <sg:ProviderKey>ShaderLibrary.SDF2DTriangle</sg:ProviderKey>
 ///     <sg:DisplayName>SDF 2D Triangle</sg:DisplayName>
